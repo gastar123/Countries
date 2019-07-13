@@ -35,20 +35,17 @@ public class MainPresenter {
     }
 
     public Observable<List<Country>> getCountries(final String url) {
-        return Observable.create(new ObservableOnSubscribe<List<Country>>() {
-            @Override
-            public void subscribe(ObservableEmitter<List<Country>> emitter) throws Exception {
-                List<Country> countryList = countryDao.getAll();
-                if (countryList != null && !countryList.isEmpty())   {
-                    emitter.onNext(countryList);
-                } else {
-                    try {
-                        emitter.onNext(downloadFromInternet(url));
-                    } catch (IOException e) {
-                        emitter.onError(new Exception("Отсутствует соединение с интернетом", e));
-                    } finally {
-                        emitter.onComplete();
-                    }
+        return Observable.create(emitter -> {
+            List<Country> countryList = countryDao.getAll();
+            if (countryList != null && !countryList.isEmpty())   {
+                emitter.onNext(countryList);
+            } else {
+                try {
+                    emitter.onNext(downloadFromInternet(url));
+                } catch (IOException e) {
+                    emitter.onError(new Exception("Отсутствует соединение с интернетом", e));
+                } finally {
+                    emitter.onComplete();
                 }
             }
         });

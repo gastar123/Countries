@@ -10,8 +10,8 @@ public class Country {
 
     @NonNull
     @PrimaryKey
-    String countryCode;
     String name;
+    String countryCode;
     String currency;
     String flag;
 

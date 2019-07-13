@@ -19,7 +19,7 @@ public interface CountryDao {
     Country getById(long id);
 
     @Insert
-    Completable insert(List<Country> countries);
+    void insert(List<Country> countries);
 
     @Update
     Completable update(Country country);
