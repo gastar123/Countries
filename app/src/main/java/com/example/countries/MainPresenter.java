@@ -1,5 +1,7 @@
 package com.example.countries;
 
+import android.content.Intent;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.request.FutureTarget;
@@ -14,6 +16,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +40,7 @@ public class MainPresenter {
     public Observable<List<Country>> getCountries(final String url) {
         return Observable.create(emitter -> {
             List<Country> countryList = countryDao.getAll();
-            if (countryList != null && !countryList.isEmpty())   {
+            if (countryList != null && !countryList.isEmpty()) {
                 emitter.onNext(countryList);
             } else {
                 try {
@@ -72,5 +75,11 @@ public class MainPresenter {
         }
         countryDao.insert(countryList);
         return countryList;
+    }
+
+    public void openCountry(Country country) {
+        Intent intent = new Intent(view, CountryActivity.class);
+        intent.putExtra("country", country);
+        view.startActivity(intent);
     }
 }

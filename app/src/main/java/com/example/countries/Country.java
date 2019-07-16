@@ -1,12 +1,14 @@
 package com.example.countries;
 
+import java.io.Serializable;
+
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 
 @Entity
-public class Country {
+public class Country implements Serializable {
 
     @NonNull
     @PrimaryKey

@@ -12,14 +12,16 @@ import io.reactivex.schedulers.Schedulers;
 
 public class MainModel {
 
+    private MainPresenter mainPresenter;
     private MainActivity view;
 
-    public MainModel(MainActivity view) {
+    public MainModel(MainPresenter mainPresenter, MainActivity view) {
+        this.mainPresenter = mainPresenter;
         this.view = view;
     }
 
     public void observer() {
-        new MainPresenter(view).getCountries("https://fxtop.com/ru/countries-currencies.php")
+        mainPresenter.getCountries("https://fxtop.com/ru/countries-currencies.php")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<List<Country>>() {
@@ -30,6 +32,7 @@ public class MainModel {
 
                     @Override
                     public void onNext(List<Country> countries) {
+                        view.createCountryAdapter(countries);
                         Toast.makeText(view, "Загружено стран: " + countries.size(), Toast.LENGTH_SHORT).show();
                     }
 
