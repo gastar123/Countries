@@ -1,12 +1,6 @@
 package com.example.countries;
 
-import android.graphics.drawable.Drawable;
-
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -16,9 +10,8 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
 
-import androidx.annotation.Nullable;
 import io.reactivex.Observable;
 
 public class DownloadFromInternet {
@@ -50,15 +43,13 @@ public class DownloadFromInternet {
         });
     }
 
-    public List<Country> downloadFromInternet(String url) throws IOException, InterruptedException {
+    public List<Country> downloadFromInternet(String url) throws IOException, ExecutionException, InterruptedException {
         List<Country> countryList = new ArrayList<>();
         Document doc;
         doc = Jsoup.connect(url).get();
         Elements countries = doc.select("body > table > tbody > tr > td:nth-child(2) > table > tbody > tr > td:nth-child(2) > table > tbody > tr:nth-child(5) > td > table > tbody");
         boolean firstRow = true;
-        Elements elements = countries.select("tr");
-        CountDownLatch countDownLatch = new CountDownLatch(elements.size() - 1);
-        for (Element countryRow : elements) {
+        for (Element countryRow : countries.select("tr")) {
             if (firstRow) {
                 firstRow = false;
                 continue;
@@ -68,23 +59,12 @@ public class DownloadFromInternet {
             country.setName(countryRow.select("td:nth-child(1) > a").text());
             country.setCurrency(countryRow.select("td:nth-child(3) > a").text());
             country.setFlag("https://fxtop.com" + countryRow.select("td:nth-child(5) > img").attr("src"));
-            Glide.with(splashActivity).load(country.getFlag()).listener(new RequestListener<Drawable>() {
-                @Override
-                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                    countDownLatch.countDown();
-                    return false;
-                }
 
-                @Override
-                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                    countDownLatch.countDown();
-                    return false;
-                }
-            }).preload();
+            // Однопоточная загрузка! Есть вариант с CountDownLatch
+            Glide.with(splashActivity).load(country.getFlag()).submit().get();
             countryList.add(country);
         }
         countryDao.insert(countryList);
-        countDownLatch.await();
         return countryList;
     }
 }
