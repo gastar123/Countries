@@ -18,13 +18,13 @@ public interface CountryDao {
     @Query("SELECT * FROM Country WHERE countryCode = :id")
     Country getById(long id);
 
+    @Query("DELETE  FROM Country")
+    Completable delete();
+
     @Insert
     void insert(List<Country> countries);
 
     @Update
     Completable update(Country country);
-
-    @Delete
-    Completable delete(Country country);
 
 }

@@ -26,6 +26,11 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.ViewHold
         this.countryList = countryList;
     }
 
+    public void changeData() {
+        this.countryList.clear();
+        notifyDataSetChanged();
+    }
+
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
     }
@@ -50,7 +55,7 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.ViewHold
     public void onBindViewHolder(@NonNull CountryAdapter.ViewHolder viewHolder, int position) {
         Country country = countryList.get(position);
         viewHolder.tvCountry.setText(country.getName());
-        Glide.with(context).load(country.getFlag()).override(App.px, App.px).into(viewHolder.ivCountry);
+        Glide.with(context).load(country.getFlag()).onlyRetrieveFromCache(true).override(App.px, App.px).into(viewHolder.ivCountry);
     }
 
     @Override

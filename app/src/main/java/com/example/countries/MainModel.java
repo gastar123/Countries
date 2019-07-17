@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+
 import java.util.List;
 
 import io.reactivex.Observer;
@@ -39,5 +41,11 @@ public class MainModel {
     private void onError(Throwable e) {
         Log.e("My error!!!!!!!!!!!!!", e.getMessage(), e);
         Toast.makeText(view, e.getMessage(), Toast.LENGTH_SHORT).show();
+    }
+
+    public void clearCache() {
+        Glide glide = Glide.get(view);
+        glide.clearDiskCache();
+        glide.clearMemory();
     }
 }

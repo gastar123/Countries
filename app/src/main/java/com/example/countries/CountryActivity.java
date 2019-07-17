@@ -28,7 +28,7 @@ public class CountryActivity extends AppCompatActivity {
         tvName = findViewById(R.id.tvName);
         tvCurrency = findViewById(R.id.tvCurrency);
 
-        Glide.with(this).load(country.getFlag()).override(App.px, App.px).into(ivFlag);
+        Glide.with(this).load(country.getFlag()).onlyRetrieveFromCache(true).override(App.px, App.px).into(ivFlag);
         tvName.setText(country.getName());
         tvCurrency.setText(country.getCurrency());
     }
