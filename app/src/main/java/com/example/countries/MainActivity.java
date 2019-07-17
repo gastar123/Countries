@@ -28,7 +28,6 @@ public class MainActivity extends AppCompatActivity {
         new MainModel(mainPresenter,this).observer();
     }
 
-
     public void createCountryAdapter(List<Country> countryList) {
         rvMain = findViewById(R.id.rvMain);
         rvMain.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));

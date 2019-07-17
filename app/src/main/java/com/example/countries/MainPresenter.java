@@ -37,44 +37,11 @@ public class MainPresenter {
         countryDao = db.countryDao();
     }
 
-    public Observable<List<Country>> getCountries(final String url) {
+    public Observable<List<Country>> getCountries() {
         return Observable.create(emitter -> {
             List<Country> countryList = countryDao.getAll();
-            if (countryList != null && !countryList.isEmpty()) {
-                emitter.onNext(countryList);
-            } else {
-                try {
-                    emitter.onNext(downloadFromInternet(url));
-                } catch (IOException e) {
-                    emitter.onError(new Exception("Отсутствует соединение с интернетом", e));
-                } finally {
-                    emitter.onComplete();
-                }
-            }
+            emitter.onNext(countryList);
         });
-    }
-
-    public List<Country> downloadFromInternet(String url) throws IOException {
-        List<Country> countryList = new ArrayList<>();
-        Document doc;
-        doc = Jsoup.connect(url).get();
-        Elements countries = doc.select("body > table > tbody > tr > td:nth-child(2) > table > tbody > tr > td:nth-child(2) > table > tbody > tr:nth-child(5) > td > table > tbody");
-        boolean firstRow = true;
-        for (Element countryRow : countries.select("tr")) {
-            if (firstRow) {
-                firstRow = false;
-                continue;
-            }
-            Country country = new Country();
-            country.setCountryCode(countryRow.select("td:nth-child(6)").text());
-            country.setName(countryRow.select("td:nth-child(1) > a").text());
-            country.setCurrency(countryRow.select("td:nth-child(3) > a").text());
-            country.setFlag("https://fxtop.com" + countryRow.select("td:nth-child(5) > img").attr("src"));
-            Glide.with(view).downloadOnly().load(country.getFlag());
-            countryList.add(country);
-        }
-        countryDao.insert(countryList);
-        return countryList;
     }
 
     public void openCountry(Country country) {
