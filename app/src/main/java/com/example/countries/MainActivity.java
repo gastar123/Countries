@@ -8,14 +8,13 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView rvMain;
     private CountryAdapter countryAdapter;
-    private MainPresenter mainPresenter;
+    private Presenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,18 +25,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init() {
-        mainPresenter = new MainPresenter(this);
-        new MainModel(mainPresenter, this).observer();
+        Model model = new Model(this);
+        presenter = new Presenter(model);
+        presenter.setView(this);
+        presenter.observer(this::createCountryAdapter);
     }
 
-    public void createCountryAdapter(List<Country> countryList) {
+    private void createCountryAdapter(List<Country> countryList) {
         rvMain = findViewById(R.id.rvMain);
         rvMain.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
         countryAdapter = new CountryAdapter(this, countryList);
-        countryAdapter.setOnItemClickListener(country -> mainPresenter.openCountry(country));
+        countryAdapter.setOnItemClickListener(country -> presenter.openCountry(country));
         rvMain.setAdapter(countryAdapter);
-        rvMain.removeAllViewsInLayout();
     }
 
     @Override
@@ -48,8 +48,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        mainPresenter.deleteDataBase();
+        presenter.deleteCountries();
         countryAdapter.changeData();
         return super.onOptionsItemSelected(item);
+    }
+
+    public interface AdapterCreator {
+        void setCountryList(List<Country> countryList);
     }
 }

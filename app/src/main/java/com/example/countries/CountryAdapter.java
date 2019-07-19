@@ -27,7 +27,7 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.ViewHold
     }
 
     public void changeData() {
-        this.countryList.clear();
+        countryList.clear();
         notifyDataSetChanged();
     }
 
@@ -41,12 +41,9 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.ViewHold
         View view = LayoutInflater.from(context).inflate(R.layout.country, viewGroup, false);
         final ViewHolder viewHolder = new ViewHolder(view);
 
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int adapterPosition = viewHolder.getAdapterPosition();
-                onItemClickListener.onItemClick(countryList.get(adapterPosition));
-            }
+        view.setOnClickListener(v -> {
+            int adapterPosition = viewHolder.getAdapterPosition();
+            onItemClickListener.onItemClick(countryList.get(adapterPosition));
         });
         return viewHolder;
     }
